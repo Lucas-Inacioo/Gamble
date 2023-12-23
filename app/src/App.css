@@ -1,0 +1,19 @@
+.homepage {
+  display: flex;
+  padding: 20px;
+}
+
+.menu-lateral {
+  width: 200px;
+  border-right: 1px solid #ccc;
+  padding-right: 20px;
+}
+
+.conteudo-principal {
+  flex-grow: 1;
+  padding-left: 20px;
+}
+
+.simulacao-jogo, .resumo-valores {
+  margin-bottom: 20px;
+}
