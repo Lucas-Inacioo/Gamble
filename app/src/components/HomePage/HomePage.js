@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import CrashGraph from '../CrashGraph/CrashGraph';
+import CrashGraph from '../Crash/CrashGraph/CrashGraph';
+import CrashGame from '../Crash/CrashGame/CrashGame';
 
 const HomePage = () => {
   const [currentGame, setCurrentGame] = useState(null);
@@ -21,7 +22,7 @@ const HomePage = () => {
         {currentGame === 'Crash' && (
           <section className="simulacao-jogo">
             <h2>Simulação de Jogo: Crash</h2>
-            <CrashGraph />
+            <CrashGame />
           </section>
         )}
 
