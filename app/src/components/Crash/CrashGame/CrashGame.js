@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Line } from 'react-chartjs-2';
 import annotationPlugin from 'chartjs-plugin-annotation';
+import CryptoJS from 'crypto-js';
+
+import './CrashGame.css';
 
 import {
   Chart as ChartJS,
@@ -24,40 +27,81 @@ ChartJS.register(
   annotationPlugin 
 );
 
+const clientSeed =
+    "0000000000000000000415ebb64b0d51ccee0bb55826e43846e5bea777d91966"; // Exemplo de clientSeed
+
+function getPoint(hash) {
+    const divisible = (hash, mod) => {
+        let val = 0;
+        let o = hash.length % 4;
+        for (let i = o > 0 ? o - 4 : 0; i < hash.length; i += 4) {
+        val = ((val << 16) + parseInt(hash.substring(i, i + 4), 16)) % mod;
+        }
+        return val === 0;
+    };
+
+    if (divisible(hash, 15)) return 0;
+    let h = parseInt(hash.slice(0, 52 / 4), 16);
+    let e = Math.pow(2, 52);
+    return Math.floor((100 * e - h) / (e - h)) / 100;
+}
+
 const CrashGame = () => {
-  const [dataPoints, setDataPoints] = useState([{ x: 0, y: 1 }]);
-  const [isActive, setIsActive] = useState(true);
-  const [finalValue, setFinalValue] = useState(null);
-  const targetValue = useRef(Math.random() * 15 + 1); // Target value between 1 and 16
-  const chartRef = useRef(null);
+    const [dataPoints, setDataPoints] = useState([{ x: 0, y: 1 }]);
+    const [isActive, setIsActive] = useState(true);
+    const [finalValue, setFinalValue] = useState(null);
+    const serverSeed = useRef(Math.random().toString(36).substring(2, 15)); // Initialize serverSeed ref
+    const targetValue = useRef(); // Initialize targetValue ref as an empty ref
+    const chartRef = useRef(null);
+    const [isCooldown, setIsCooldown] = useState(false);
 
     useEffect(() => {
         let interval;
+        
         if (isActive && chartRef.current) {
+            let currentSeed = serverSeed.current;
+            let hash = CryptoJS.HmacSHA256(currentSeed, clientSeed).toString(CryptoJS.enc.Hex);
+            targetValue.current = getPoint(hash);
+            
+            const incrementX = 0.01;
+            let incrementY = 1.0006;
+            
             interval = setInterval(() => {
                 setDataPoints(points => {
-                const lastPoint = points[points.length - 1];
-                const newX = lastPoint.x + 0.01;
-                const newY = lastPoint.y * 1.0006; // Exponential growth factor
 
-                if (newY >= targetValue.current) {
-                    clearInterval(interval);
-                    setFinalValue(newY);
-                    setIsActive(false);
-                    setTimeout(() => {
-                    setDataPoints([{ x: 0, y: 1 }]);
-                    setIsActive(true);
-                    setFinalValue(null);
-                    targetValue.current = Math.random() * 15 + 1; // Reset target value
-                    }, 5000);
-                } else {
-                    return [...points, { x: newX, y: newY }];
-                }
+                    if (points.length === 0) {
+                        return [{ x: 0, y: 1 }];
+                    }
+    
+                    const lastPoint = points[points.length - 1];
+                    const newX = lastPoint.x + incrementX;
+                    const newY = lastPoint.y * incrementY;
+                    incrementY *= 1.000001;
+    
+                    console.log(targetValue.current);
+                    if (newY >= targetValue.current) {
+                        setDataPoints([{ x: 0, y: 1 }]);
+                        clearInterval(interval);
+                        setFinalValue(targetValue.current);
+                        setIsActive(false);
+                        setIsCooldown(true);
+                        setTimeout(() => {
+                            setIsActive(true);
+                            setFinalValue(null);
+                            setIsCooldown(false); 
+                            serverSeed.current = Math.random().toString(36).substring(2, 15);
+                        }, 5000);
+                        return [...points, { x: newX, y: newY }];
+                    } else {
+                        return [...points, { x: newX, y: newY }];
+                    }
                 });
-            }, 1);
+            }, 10);
+    
+            return () => {
+                if (interval) clearInterval(interval);
+            };
         }
-
-        return () => clearInterval(interval);
     }, [isActive]);
 
     const data = {
@@ -80,7 +124,6 @@ const CrashGame = () => {
         },
         ],
     };
-
     const options = {
         scales: {
             x: {
@@ -107,7 +150,12 @@ const CrashGame = () => {
                     textLabel: {
                     type: 'label',
                     position: 'top',
-                    content: () => `${dataPoints[dataPoints.length - 1].y.toFixed(2)}X`,
+                    content: () => {
+                        if (isCooldown && finalValue !== null) {
+                            return `${finalValue.toFixed(2)}X`;
+                        }
+                        return `${dataPoints[dataPoints.length - 1]?.y.toFixed(2)}X`;
+                    },
                     backgroundColor: 'rgba(0, 0, 0, 0.5)',
                     font: {
                     size: 65,
@@ -123,8 +171,16 @@ const CrashGame = () => {
 
     return (
         <div>
-            <Line ref={chartRef} data={data} options={options} />
-            {finalValue && <p>Final Value: {finalValue.toFixed(2)}</p>}
+            {dataPoints && (
+                <Line ref={chartRef} data={data} options={options} />
+            )}
+            
+            {isCooldown && finalValue && (
+            <div className="crash-container">
+                <span className="crash-value">{finalValue.toFixed(2)}X</span>
+                <span className="crash-label">CRASHED</span>
+            </div>
+            )}
         </div>
     );
 };
