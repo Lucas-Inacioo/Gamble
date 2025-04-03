@@ -1,39 +1,62 @@
 import React, { useState } from 'react';
-import CrashGraph from '../Crash/CrashGraph/CrashGraph';
 import CrashGame from '../Crash/CrashGame/CrashGame';
+import CrashPlayMenu from '../Crash/CrashPlayMenu/CrashPlayMenu';
+import SimulateCrashGames from '../Crash/GameSimulation/GameSimulation';
 
 const HomePage = () => {
   const [currentGame, setCurrentGame] = useState(null);
+
+  // Shared states between play menu and CrashGame
+  const [betMode, setBetMode] = useState('Normal');
+  const [betAmount, setBetAmount] = useState(5);
+  const [autoRetire, setAutoRetire] = useState(2);
+
+  // Function to trigger the start of the game.
+  const handleStartGame = () => {
+    console.log('Iniciando jogo com:', { betMode, betAmount, autoRetire });
+  };
 
   return (
     <div className="homepage">
       <aside className="menu-lateral">
         <h2>Menu de Jogos</h2>
-        
         <ul>
           <li>
             <button onClick={() => setCurrentGame('Crash')}>Crash</button>
           </li>
-          {/* Adicione mais jogos aqui */}
+          {/* Outros jogos futuros */}
         </ul>
       </aside>
 
       <main className="conteudo-principal">
         {currentGame === 'Crash' && (
-          <section className="simulacao-jogo">
-            <h2>Simulação de Jogo: Crash</h2>
-            <CrashGame />
-          </section>
+          <div className="crash-container">
+            {/* Left bar: Play menu (only for Crash) */}
+            <div className="left-bar">
+              <CrashPlayMenu
+                betMode={betMode}
+                setBetMode={setBetMode}
+                betAmount={betAmount}
+                setBetAmount={setBetAmount}
+                autoRetire={autoRetire}
+                setAutoRetire={setAutoRetire}
+                onStartGame={handleStartGame}
+              />
+            </div>
+
+            {/* Right bar: CrashGame rendering */}
+            <div className="right-bar">
+              <CrashGame
+                betMode={betMode}
+                betAmount={betAmount}
+                autoRetire={autoRetire}
+                setCurrentGame={setCurrentGame}
+              />
+            </div>
+          </div>
         )}
 
-        <section className="resumo-valores">
-          <h2>Resumo</h2>
-          <p>Valores Apostados: R$0</p>
-          <p>Ganhos: R$0</p>
-          <p>Perdidos: R$0</p>
-          <p>Retorno a cada R$100 gastos: R$0</p>
-          <button>Explicação Matemática</button>
-        </section>
+        {currentGame === 'simulateCrashGames' && <SimulateCrashGames />}
       </main>
     </div>
   );

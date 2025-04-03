@@ -1,0 +1,80 @@
+.homepage {
+    display: flex;
+}
+  
+.menu-lateral {
+    width: 200px;
+    background-color: #2b2b2b;
+    color: #fff;
+    padding: 1rem;
+}
+
+.conteudo-principal {
+    flex: 1;
+    display: flex;
+}
+
+.crash-container {
+    display: flex;
+    width: 100%;
+}
+
+/* Left bar styling */
+    .left-bar {
+    width: 300px;
+    background-color: #1f1f1f;
+    padding: 1rem;
+    color: #fff;
+}
+
+/* Right bar styling */
+.right-bar {
+    flex: 1;
+    background-color: #2d2d2d;
+    padding: 1rem;
+    color: #fff;
+}
+
+.bet-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.bet-mode {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.mode-button {
+    background: #444;
+    border: none;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+}
+
+.mode-button.active {
+    background: #ff5a5f;
+}
+
+.bet-amount,
+.auto-retirar {
+    display: flex;
+    flex-direction: column;
+}
+
+.amount-input {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+}
+
+.start-button {
+    background: #ff5a5f;
+    border: none;
+    color: #fff;
+    padding: 0.75rem;
+    cursor: pointer;
+    font-size: 1rem;
+}
