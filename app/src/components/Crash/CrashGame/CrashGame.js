@@ -27,8 +27,7 @@ ChartJS.register(
     annotationPlugin
 );
 
-const clientSeed =
-    "0000000000000000000415ebb64b0d51ccee0bb55826e43846e5bea777d91966";
+const clientSeed = "0000000000000000000415ebb64b0d51ccee0bb55826e43846e5bea777d91966";
 
 function getPoint(hash) {
     const divisible = (hash, mod) => {
@@ -56,7 +55,7 @@ const CrashGame = (
         autoRetire,
         setAutoRetire,
         onStartGame,
-        setCurrentGame, // New prop for updating currentGame in HomePage
+        setCurrentGame,
     } = {}
 ) => {
     const [dataPoints, setDataPoints] = useState([{ x: 0, y: 1 }]);
@@ -72,6 +71,7 @@ const CrashGame = (
     const hasCrashedRef = useRef(false);
 
     useEffect(() => {
+        onStartGame();
         hasCrashedRef.current = false;
 
         if (isActive && chartRef.current) {
@@ -132,7 +132,7 @@ const CrashGame = (
                 }
             };
         }
-    }, [isActive, betAmount]);
+    }, [isActive, betAmount, onStartGame]);
 
     const data = {
         datasets: [

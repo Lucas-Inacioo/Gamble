@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import CryptoJS from 'crypto-js';
 
-import './GameSimulation.css';
+import './SimulateCrashGames.css';
 
 const clientSeed =
     "0000000000000000000415ebb64b0d51ccee0bb55826e43846e5bea777d91966";
