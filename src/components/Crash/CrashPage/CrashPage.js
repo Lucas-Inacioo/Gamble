@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import CrashGame from '../CrashGame/CrashGame';
 import CrashPlayMenu from '../CrashPlayMenu/CrashPlayMenu';
 
+import './CrashPage.css';
+
 const CrashPage = ({ setCurrentGame }) => {
     // Shared states between play menu and CrashGame
     const [betMode, setBetMode] = useState('Normal');

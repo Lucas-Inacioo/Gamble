@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import CrashPage from '../Crash/CrashPage/CrashPage';
 import SimulateCrashGames from '../Crash/SimulateCrashGames/SimulateCrashGames';
+import './HomePage.css';
 
 const HomePage = () => {
   const [currentGame, setCurrentGame] = useState(null);

@@ -1,38 +1,30 @@
 .homepage {
     display: flex;
+    height: 100vh;
 }
   
 .menu-lateral {
     width: 200px;
-    background-color: #2b2b2b;
-    color: #fff;
     padding: 1rem;
+    background: #f5f5f5;
 }
 
 .conteudo-principal {
     flex: 1;
-    display: flex;
+    padding: 1rem;
+    overflow: auto;
 }
 
 .crash-container {
     display: flex;
-    width: 100%;
-}
-
-/* Left bar styling */
-    .left-bar {
-    width: 300px;
-    background-color: #1f1f1f;
-    padding: 1rem;
-    color: #fff;
-}
-
-/* Right bar styling */
-.right-bar {
-    flex: 1;
-    background-color: #2d2d2d;
-    padding: 1rem;
-    color: #fff;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 1rem;
+    margin: 0 auto;
+    padding: 0.5rem;
+    box-sizing: border-box;
+    overflow: auto;
 }
 
 .bet-controls {
