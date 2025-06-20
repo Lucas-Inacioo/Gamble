@@ -237,7 +237,7 @@ const CrashGame = (
     );
 
     return (
-        <div className="crash-game">
+        <div className="crash-game" style={{ color: 'white' }}>
             <div className="panel-light chart-wrapper">
                 <div className="chart-container">
                     <Line ref={chartRef} data={data} options={options} />
@@ -249,11 +249,9 @@ const CrashGame = (
                     {renderLastGames()}
                 </div>
             </div>
-            <div className="simulation">
-                <button onClick={() => setCurrentGame('simulateCrashGames')}>
-                    Simular Jogos de Crash
-                </button>
-            </div>
+            <button onClick={() => setCurrentGame('simulateCrashGames')}>
+                Simular Jogos de Crash
+            </button>
         </div>
     );
 };

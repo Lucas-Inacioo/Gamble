@@ -2,7 +2,7 @@
     display: flex;
     height: 100vh;
 }
-  
+
 .menu-lateral {
     width: 200px;
     padding: 1rem;
@@ -16,21 +16,20 @@
 }
 
 .crash-container {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: flex-start;
-    gap: 1rem;
-    margin: 0 auto;
-    padding: 0.5rem;
-    box-sizing: border-box;
-    overflow: auto;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  column-gap: 1.2rem;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-panel);
+  border-radius: 8px;
+  padding: 1.2rem;
 }
 
 .bet-controls {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    color: white;
 }
 
 .bet-mode {
@@ -72,7 +71,7 @@
 }
 
 :root {
-  --bg-panel:     #131b24;
-  --border-panel: #1f2a38;
-  --shadow-panel: 0 0 4px rgba(0,0,0,.4);
+    --bg-panel: #131b24;
+    --border-panel: #1f2a38;
+    --shadow-panel: 0 0 4px rgba(0, 0, 0, .4);
 }

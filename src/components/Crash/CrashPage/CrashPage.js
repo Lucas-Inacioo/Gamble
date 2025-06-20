@@ -18,7 +18,7 @@ const CrashPage = ({ setCurrentGame }) => {
     return (
         <>
             {/* Left bar: Play menu (only for Crash) */}
-            <div className="left-bar">
+            <div className="left-bar panel-light">
                 <CrashPlayMenu
                     betMode={betMode}
                     setBetMode={setBetMode}
