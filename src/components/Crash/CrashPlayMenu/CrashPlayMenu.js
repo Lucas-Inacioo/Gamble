@@ -1,4 +1,5 @@
 import React from 'react';
+import { useBalance } from '../../../contexts/BalanceContext';
 import './CrashPlayMenu.css';
 
 const CrashPlayMenu = ({
@@ -8,22 +9,57 @@ const CrashPlayMenu = ({
   setBetAmount,
   autoRetire,
   setAutoRetire,
-  onStartGame,
+  gamePhase,     // 'betting' | 'active' | 'result'
+  betPlaced,
+  onPlaceBet,
+  onCashOut,
 }) => {
-  const handleModeChange = (mode) => {
-    setBetMode(mode);
-  };
+  const { balance } = useBalance();
 
-  const handleBetAmountChange = (e) => {
-    setBetAmount(Number(e.target.value));
-  };
+  const handleModeChange = (mode) => setBetMode(mode);
+  const handleBetAmountChange = (e) => setBetAmount(Number(e.target.value));
+  const handleAutoRetireChange = (e) => setAutoRetire(Number(e.target.value));
 
-  const handleAutoRetireChange = (e) => {
-    setAutoRetire(Number(e.target.value));
+  const renderActionButton = () => {
+    /* janela de apostas */
+    if (gamePhase === 'betting') {
+      if (betPlaced) {
+        return (
+          <button className="start-button" disabled>
+            Aguardando...
+          </button>
+        );
+      }
+      return (
+        <button className="start-button" onClick={onPlaceBet}>
+          Fazer aposta
+        </button>
+      );
+    }
+
+    /* jogo em andamento */
+    if (gamePhase === 'active' && betPlaced) {
+      return (
+        <button className="start-button" onClick={onCashOut}>
+          Retirar
+        </button>
+      );
+    }
+
+    /* todas as demais situações */
+    return (
+      <button className="start-button" disabled>
+        Aguarde...
+      </button>
+    );
   };
 
   return (
     <div className="bet-controls play-menu">
+      <p>
+        <strong>Saldo:</strong> R$ {balance.toFixed(2)}
+      </p>
+
       <div className="bet-mode">
         <button
           className={`mode-button ${betMode === 'Normal' ? 'active' : ''}`}
@@ -65,9 +101,7 @@ const CrashPlayMenu = ({
         />
       </div>
 
-      <button className="start-button" onClick={onStartGame}>
-        Começar o jogo
-      </button>
+      {renderActionButton()}
     </div>
   );
 };
