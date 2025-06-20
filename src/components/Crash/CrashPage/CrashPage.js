@@ -29,6 +29,8 @@ const CrashPage = ({ setCurrentGame }) => {
 
     const [lastGames, setLastGames] = useState([]);    // histórico de crash
 
+    const [payoutInfo, setPayoutInfo] = useState(null);
+
     const currentMultRef = useRef(1);
     const cashedOutRef = useRef(false);
 
@@ -66,19 +68,21 @@ const CrashPage = ({ setCurrentGame }) => {
         return () => clearTimeout(timer);
     }, [gamePhase]);
 
+    useEffect(() => {
+        if (gamePhase === 'betting') setPayoutInfo(null);
+    }, [gamePhase]);
+
     /* ---------------- APOSTAR ---------------- */
     const placeBet = () => {
-        /* já apostou ou não está na janela de apostas? */
         if (gamePhase !== 'betting' || bet) return;
-
         if (balance < betAmount) {
             alert('Saldo insuficiente.');
             return;
         }
-
-        setBalance((b) => b - betAmount);              // debita
-        setBet({ amount: betAmount, autoRetire });     // registra aposta
-        cashedOutRef.current = false;                  // libera para 1º cash-out
+        setBalance((b) => b - betAmount);
+        setBet({ amount: betAmount, autoRetire });
+        cashedOutRef.current = false;
+        setPayoutInfo(null);                // limpa eventual toast anterior
     };
 
     /* ---------------- RETIRAR ---------------- */
@@ -86,14 +90,15 @@ const CrashPage = ({ setCurrentGame }) => {
         (mult) => {
             if (!bet || cashedOutRef.current || gamePhase !== 'active') return;
 
-            // Round multiplier to 2 decimal places
             mult = Math.round(mult * 100) / 100;
 
             const winnings = bet.amount * mult;
-            setBalance((b) => +(b + winnings).toFixed(2));
+            setBalance((b) => b + winnings);
             setBet(null);
-
             cashedOutRef.current = true;
+
+            /* registra infos para o toast */
+            setPayoutInfo({ mult, amount: winnings });
         },
         [bet, gamePhase, setBalance]
     );
@@ -138,14 +143,15 @@ const CrashPage = ({ setCurrentGame }) => {
 
             <div className="right-bar">
                 <CrashGame
-                    key={gameKey}                  /* remonta a cada rodada */
+                    key={gameKey}
                     betMode={betMode}
                     betAmount={betAmount}
                     autoRetire={autoRetire}
                     setCurrentGame={setCurrentGame}
                     gamePhase={gamePhase}
                     countdown={countdown}
-                    lastGames={lastGames}          /* histórico persistente */
+                    lastGames={lastGames}
+                    payoutInfo={payoutInfo}
                     onMultiplierChange={onMultiplierChange}
                     onCrash={onCrash}
                 />

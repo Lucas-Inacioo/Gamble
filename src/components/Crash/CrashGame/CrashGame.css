@@ -38,14 +38,43 @@
 }
 
 .chart-wrapper {
-  position: relative;
-  padding: 16px;
+    position: relative;
+    padding: 16px;
 }
+
 .chart-wrapper canvas {
-  background: var(--bg-panel);
+    background: var(--bg-panel);
 }
 
 .right-bar {
     background: #0d1117;
     border: none;
+}
+
+.chart-wrapper {
+    position: relative;
+}
+
+.payout-toast {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #28be5a;
+    color: #fff;
+    padding: 8px 20px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 700;
+    line-height: 1.2;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    z-index: 5;
+}
+
+.payout-mult {
+    font-size: 20px;
+}
+
+.payout-amount {
+    font-size: 14px;
 }

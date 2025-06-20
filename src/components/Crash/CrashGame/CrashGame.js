@@ -54,7 +54,6 @@ function getPoint(hash) {
         }
         return val === 0;
     };
-
     if (divisible(hash, 15)) return 0;
 
     let h = parseInt(hash.slice(0, 52 / 4), 16);
@@ -63,15 +62,13 @@ function getPoint(hash) {
 }
 
 const CrashGame = ({
-    betMode,
-    betAmount,
-    autoRetire,
     setCurrentGame,
     onMultiplierChange,
     onCrash,
     gamePhase,      // 'betting' | 'active' | 'result'
     countdown,      // segundos restantes durante betting
     lastGames = [], // histórico das 10 últimas partidas
+    payoutInfo,     // { mult, amount } ou null
 } = {}) => {
     const [dataPoints, setDataPoints] = useState([{ x: 0, y: 1 }]);
     const [finalValue, setFinalValue] = useState(null);
@@ -79,65 +76,61 @@ const CrashGame = ({
 
     const serverSeed = useRef(Math.random().toString(36).substring(2, 15));
     const targetValue = useRef(0);
-    const chartRef = useRef(null);
     const intervalRef = useRef(null);
-    const hasCrashedRef = useRef(false);
+    const hasCrashed = useRef(false);
 
-    /* ========= LÓGICA PRINCIPAL DO JOGO ========= */
+    /* mantém callbacks atuais */
+    const multCbRef = useRef(onMultiplierChange);
+    const crashCbRef = useRef(onCrash);
+    useEffect(() => { multCbRef.current = onMultiplierChange; });
+    useEffect(() => { crashCbRef.current = onCrash; });
+
+    /* loop principal */
     useEffect(() => {
-        if (gamePhase !== 'active') return;  // só roda na fase ativa
+        if (gamePhase !== 'active') return;
 
-        onMultiplierChange?.(1);
-        hasCrashedRef.current = false;
+        multCbRef.current?.(1);
+        hasCrashed.current = false;
 
-        const hash = CryptoJS.HmacSHA256(
-            serverSeed.current,
-            clientSeed
-        ).toString(CryptoJS.enc.Hex);
+        const hash = CryptoJS.HmacSHA256(serverSeed.current, clientSeed)
+            .toString(CryptoJS.enc.Hex);
         targetValue.current = getPoint(hash);
 
         const incrementX = 0.01;
         let incrementY = 1.0006;
 
         intervalRef.current = setInterval(() => {
-            setDataPoints((points) => {
-                if (!points.length) return [{ x: 0, y: 1 }];
-
-                const lastPoint = points[points.length - 1];
-                const newX = lastPoint.x + incrementX;
-                const newY = lastPoint.y * incrementY;
+            setDataPoints((pts) => {
+                const last = pts[pts.length - 1];
+                const newX = last.x + incrementX;
+                const newY = last.y * incrementY;
                 incrementY *= 1.000001;
 
-                onMultiplierChange?.(newY);
+                multCbRef.current?.(newY);
 
-                /* --- CRASH --- */
-                if (newY >= targetValue.current && !hasCrashedRef.current) {
-                    hasCrashedRef.current = true;
+                if (newY >= targetValue.current && !hasCrashed.current) {
+                    hasCrashed.current = true;
                     clearInterval(intervalRef.current);
                     intervalRef.current = null;
-                    setFinalValue(targetValue.current);
 
-                    onCrash?.(targetValue.current);
+                    setFinalValue(targetValue.current);
+                    crashCbRef.current?.(targetValue.current);
 
                     setIsCooldown(true);
-
-                    /* remove o “CRASHED” após 5 s para próximo ciclo */
                     setTimeout(() => setIsCooldown(false), 5000);
                 }
-
-                return [...points, { x: newX, y: newY }];
+                return [...pts, { x: newX, y: newY }];
             });
         }, 10);
 
         return () => {
-            if (intervalRef.current) {
-                clearInterval(intervalRef.current);
-                intervalRef.current = null;
-            }
+            if (intervalRef.current) clearInterval(intervalRef.current);
         };
-    }, [gamePhase, betAmount, onMultiplierChange, onCrash]);
+    }, [gamePhase]);
 
-    /* ============== DADOS E GRÁFICO ============== */
+    const currentY = dataPoints[dataPoints.length - 1]?.y ?? 1;
+
+    /* gráfico -------------------------------------------------------------- */
     const data = {
         datasets: [
             {
@@ -158,12 +151,9 @@ const CrashGame = ({
         ],
     };
 
-    const currentX = dataPoints[dataPoints.length - 1]?.x ?? 0;
-    const currentY = dataPoints[dataPoints.length - 1]?.y ?? 1;
-
     const options = {
         scales: {
-            x: { type: 'linear', min: 0, max: Math.max(5, currentX + 0.5) },
+            x: { type: 'linear', min: 0, max: Math.max(5, dataPoints.length * 0.01) },
             y: { type: 'linear', min: 1, max: Math.max(1.3, currentY + 0.5) },
         },
         animation: { duration: 0 },
@@ -178,11 +168,9 @@ const CrashGame = ({
                         content: () => {
                             if (gamePhase === 'betting')
                                 return [`${countdown.toFixed(1)}s`, 'APOSTE!'];
-
                             if (isCooldown && finalValue !== null)
                                 return [`${finalValue.toFixed(2)}X`, 'CRASHED'];
-
-                            return `${dataPoints[dataPoints.length - 1]?.y.toFixed(2)}X`;
+                            return `${currentY.toFixed(2)}X`;
                         },
                         backgroundColor: () => {
                             if (gamePhase === 'betting')
@@ -194,18 +182,29 @@ const CrashGame = ({
                         color: '#fff',
                         borderRadius: 8,
                         padding: 25,
-                        font: { size: 36, weight: 'bold', family: 'Arial' },
+                        font: { size: 32, weight: 'bold', family: 'Arial' },
                     },
                 },
             },
         },
     };
 
+    /* render --------------------------------------------------------------- */
     return (
         <div className="crash-game" style={{ color: 'white' }}>
             <div className="panel-light chart-wrapper">
+                {/* toast verde sobreposto */}
+                {payoutInfo && (
+                    <div className="payout-toast">
+                        <div className="payout-mult">X{payoutInfo.mult.toFixed(2)}</div>
+                        <div className="payout-amount">
+                            VOCÊ&nbsp;GANHOU&nbsp;R$&nbsp;{payoutInfo.amount.toFixed(2)}
+                        </div>
+                    </div>
+                )}
+
                 <div className="chart-container">
-                    <Line ref={chartRef} data={data} options={options} />
+                    <Line data={data} options={options} />
                 </div>
             </div>
 
@@ -213,10 +212,8 @@ const CrashGame = ({
                 <h3>Últimos 10 Jogos</h3>
                 <div className="panel-light history-bar">
                     {lastGames.map((v, i) => (
-                        <div
-                            key={i}
-                            className={`crash-history ${v > 2 ? 'crash-green' : ''}`}
-                        >
+                        <div key={i}
+                            className={`crash-history ${v > 2 ? 'crash-green' : ''}`}>
                             <span className="crash-value">{v.toFixed(2)}X</span>
                         </div>
                     ))}
