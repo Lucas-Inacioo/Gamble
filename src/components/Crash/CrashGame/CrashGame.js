@@ -26,6 +26,21 @@ ChartJS.register(
     Legend,
     annotationPlugin
 );
+ChartJS.defaults.color = '#adb5bd';
+ChartJS.defaults.borderColor = 'rgba(255,255,255,.08)';
+
+const canvasBgPlugin = {
+    id: 'canvas_bg',
+    beforeDraw(chart, args, opts) {
+        const { ctx, width, height } = chart;
+        ctx.save();
+        ctx.globalCompositeOperation = 'destination-over';
+        ctx.fillStyle = opts.color || '#0d1117';
+        ctx.fillRect(0, 0, width, height);
+        ctx.restore();
+    },
+};
+ChartJS.register(canvasBgPlugin);
 
 const clientSeed = "0000000000000000000415ebb64b0d51ccee0bb55826e43846e5bea777d91966";
 
@@ -137,42 +152,43 @@ const CrashGame = (
     const data = {
         datasets: [
             {
-                label: 'Exponential Growth',
+                label: 'Crash line',
                 data: dataPoints,
-                fill: false,
-                backgroundColor: 'rgb(75, 192, 192)',
-                borderColor: 'rgba(75, 192, 192, 0.2)',
-                showLine: true,
+                borderColor: '#ff0050',
+                backgroundColor: '#ff0050',
                 pointRadius: 0,
+                tension: 0.02,
             },
             {
+                // keeps the moving dot red as well
                 label: 'Current Position',
                 data: [dataPoints[dataPoints.length - 1]],
-                backgroundColor: 'rgb(255, 99, 132)',
-                borderColor: 'rgba(255, 99, 132, 0.2)',
-                pointRadius: 5,
+                backgroundColor: '#ff0050',
+                borderColor: '#ff0050',
+                pointRadius: 6,
             },
         ],
     };
+
+    const currentX = dataPoints[dataPoints.length - 1]?.x ?? 0;
+    const currentY = dataPoints[dataPoints.length - 1]?.y ?? 1;
 
     const options = {
         scales: {
             x: {
                 type: 'linear',
-                position: 'bottom',
-                suggestedMin: 0,
-                suggestedMax: 5,
+                min: 0,
+                max: Math.max(5, currentX + 0.5),
             },
             y: {
                 type: 'linear',
-                suggestedMin: 1,
-                suggestedMax: 1.3,
+                min: 1,
+                max: Math.max(1.3, currentY + 0.5),
             },
         },
-        animation: {
-            duration: 0,
-        },
+        animation: { duration: 0 },
         plugins: {
+            canvas_bg: { color: '#0d1117' },
             legend: {
                 display: false,
             },
@@ -183,44 +199,55 @@ const CrashGame = (
                         position: 'top',
                         content: () => {
                             if (isCooldown && finalValue !== null) {
-                                return `${finalValue.toFixed(2)}X`;
+                                return [
+                                    `${finalValue.toFixed(2)}X`,
+                                    'CRASHED',
+                                ];
                             }
                             return `${dataPoints[dataPoints.length - 1]?.y.toFixed(2)}X`;
                         },
-                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                        backgroundColor: () => isCooldown
+                            ? 'rgba(255, 0, 0, 0.85)'
+                            : 'rgba(40, 40, 40, 0.85)',
+                        color: '#fff',
+                        borderRadius: 8,
+                        padding: 25,
                         font: {
-                            size: 65,
+                            size: 36,
                             weight: 'bold',
                             family: 'Arial',
                         },
-                        color: '#fff',
                     },
                 },
             },
         },
     };
 
-    const renderLastGames = () => {
-        return (
-            <div className="last-games-list">
-                {lastGamesCrashValue.map((value, index) => (
-                    <div key={index} className="crash-history">
-                        <span className="crash-value">{value.toFixed(2)}X</span>
-                        <span className="crash-label">CRASHED</span>
-                    </div>
-                ))}
-            </div>
-        );
-    };
+    const renderLastGames = () => (
+        <div className="last-games-list">
+            {lastGamesCrashValue.map((value, index) => (
+                <div
+                    key={index}
+                    className={`crash-history ${value > 2 ? 'crash-green' : ''}`}
+                >
+                    <span className="crash-value">{value.toFixed(2)}X</span>
+                </div>
+            ))}
+        </div>
+    );
 
     return (
         <div className="crash-game">
-            <div className="chart-container">
-                <Line ref={chartRef} data={data} options={options} />
+            <div className="panel-light chart-wrapper">
+                <div className="chart-container">
+                    <Line ref={chartRef} data={data} options={options} />
+                </div>
             </div>
             <div className="last-games-container">
                 <h3>Últimos 10 Jogos</h3>
-                {renderLastGames()}
+                <div className="panel-light history-bar">
+                    {renderLastGames()}
+                </div>
             </div>
             <div className="simulation">
                 <button onClick={() => setCurrentGame('simulateCrashGames')}>

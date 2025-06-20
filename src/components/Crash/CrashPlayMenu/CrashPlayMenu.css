@@ -1,0 +1,5 @@
+.play-menu {
+  padding: 12px 16px;
+  width: 280px;             /* ou o valor que já usa          */
+  box-sizing: border-box;   /* garante que o padding não quebre o layout */
+}

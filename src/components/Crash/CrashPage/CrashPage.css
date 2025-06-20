@@ -13,3 +13,10 @@
     padding: 1rem;
     color: #fff;
 }
+
+.panel-light {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-panel);
+  border-radius: 6px;
+  box-shadow: var(--shadow-panel);
+}

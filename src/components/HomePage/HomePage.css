@@ -70,3 +70,9 @@
     cursor: pointer;
     font-size: 1rem;
 }
+
+:root {
+  --bg-panel:     #131b24;
+  --border-panel: #1f2a38;
+  --shadow-panel: 0 0 4px rgba(0,0,0,.4);
+}

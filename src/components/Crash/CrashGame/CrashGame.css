@@ -5,12 +5,16 @@
 }
 
 .crash-history {
-    background-color: #ff0000; 
+    background-color: rgba(40, 40, 40, 0.85);
     color: white;
     border-radius: 4px;
     padding: 10px;
 }
-    
+
+.crash-history.crash-green {
+    background-color: #00c853;
+}
+
 .crash-value {
     font-size: 2rem;
     font-weight: bold;
@@ -21,4 +25,27 @@
     text-align: center;
     margin-top: 5px;
     font-size: 1rem;
+}
+
+.chart-container {
+    background: #0d1117;
+    border-radius: 6px;
+    padding: 8px;
+}
+
+.chart-container canvas {
+    background: #0d1117;
+}
+
+.chart-wrapper {
+  position: relative;
+  padding: 16px;
+}
+.chart-wrapper canvas {
+  background: var(--bg-panel);
+}
+
+.right-bar {
+    background: #0d1117;
+    border: none;
 }

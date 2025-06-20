@@ -1,10 +1,16 @@
+html,
 body {
+  height: 100%;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  background: #0d1117;
+  font-family: 'Inter', sans-serif;
+}
+
+:root {
+  --bg-base: #0d1117;
+  --bg-panel: #131b24;
+  --border-panel: #1f2a38;
+  --shadow-panel: 0 0 4px rgba(0,0,0,.4);
 }
 
 code {
