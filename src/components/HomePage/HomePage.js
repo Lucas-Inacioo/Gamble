@@ -1,16 +1,8 @@
 import React, { useState } from 'react';
 import CrashPage from '../Crash/CrashPage/CrashPage';
 import SimulateCrashGames from '../Crash/SimulateCrashGames/SimulateCrashGames';
-import Menu from '../Menu/Menu';
-import { FaRocket } from 'react-icons/fa';
-import { GiDiceSixFacesFive, GiCardPick } from 'react-icons/gi';
+import Menu, { games } from '../Menu/Menu';
 import './HomePage.css';
-
-const games = [
-  { id: 'Crash', label: 'Crash', icon: <FaRocket /> },
-  { id: 'Double', label: 'Double', icon: <GiCardPick /> },
-  { id: 'Dice', label: 'Dice', icon: <GiDiceSixFacesFive /> },
-];
 
 const HomePage = () => {
   const [currentGame, setCurrentGame] = useState(null);
@@ -36,7 +28,7 @@ const HomePage = () => {
 
       <main className="main-page">
         {/* Main Page */}
-        {!currentGame && (
+        {currentGame === 'mainPage' && (
           <div className="menu">
             <Menu setCurrentGame={setCurrentGame} />
           </div>
