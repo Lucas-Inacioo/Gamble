@@ -42,10 +42,9 @@ const canvasBgPlugin = {
 };
 ChartJS.register(canvasBgPlugin);
 
-const clientSeed =
-    '0000000000000000000415ebb64b0d51ccee0bb55826e43846e5bea777d91966';
+const clientSeed = '0000000000000000000415ebb64b0d51ccee0bb55826e43846e5bea777d91966';
 
-function getPoint(hash) {
+export function getPoint(hash) {
     const divisible = (hash, mod) => {
         let val = 0;
         let o = hash.length % 4;
