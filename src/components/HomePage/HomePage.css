@@ -1,12 +1,81 @@
+html,
+body {
+    margin: 0;
+    height: 100%;
+    background: #0e1824;
+}
+
 .homepage {
     display: flex;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 .menu-lateral {
-    width: 200px;
-    padding: 1rem;
-    background: #f5f5f5;
+    width: 240px;
+    height: 100vh;
+    background: #0e1824;
+    padding-top: 1rem;
+    color: #7e8ba4;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: #162331 transparent;
+}
+
+.menu-lateral::-webkit-scrollbar {
+    width: 6px;
+}
+
+.menu-lateral::-webkit-scrollbar-thumb {
+    background: #162331;
+    border-radius: 6px;
+}
+
+.menu-lateral::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.menu-lateral ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.menu-lateral li {
+    margin: 4px 0;
+}
+
+.menu-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 20px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+    transition: background .2s, color .2s;
+}
+
+.menu-btn:hover {
+    background: #162331;
+    color: #fff;
+}
+
+.menu-btn.active {
+    background: #162331;
+    color: #fff;
+    border-left: 4px solid #ff0033;
+}
+
+.menu-btn svg {
+    font-size: 20px;
 }
 
 .conteudo-principal {
@@ -16,13 +85,13 @@
 }
 
 .crash-container {
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  column-gap: 1.2rem;
-  background: var(--bg-panel);
-  border: 1px solid var(--border-panel);
-  border-radius: 8px;
-  padding: 1.2rem;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    column-gap: 1.2rem;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-panel);
+    border-radius: 8px;
+    padding: 1.2rem;
 }
 
 .bet-controls {
