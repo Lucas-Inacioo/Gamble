@@ -80,6 +80,10 @@ const CrashPage = ({ setCurrentGame }) => {
             alert('Saldo insuficiente.');
             return;
         }
+        if (autoRetire <= 1) {
+            alert('O valor de auto-retirada deve ser maior que 1.');
+            return;
+        }
         setBalance((b) => b - betAmount);
         setBet({ amount: betAmount, autoRetire });
         cashedOutRef.current = false;
