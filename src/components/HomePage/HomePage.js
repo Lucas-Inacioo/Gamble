@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import CrashPage from '../Crash/CrashPage/CrashPage';
 import SimulateCrashGames from '../Crash/SimulateCrashGames/SimulateCrashGames';
+import Menu from '../Menu/Menu';
 import { FaRocket } from 'react-icons/fa';
 import { GiDiceSixFacesFive, GiCardPick } from 'react-icons/gi';
 import './HomePage.css';
@@ -33,8 +34,16 @@ const HomePage = () => {
         </ul>
       </aside>
 
-      <main className="conteudo-principal">
-        {currentGame === 'Crash' && (
+      <main className="main-page">
+        {/* Main Page */}
+        {!currentGame && (
+          <div className="menu">
+            <Menu setCurrentGame={setCurrentGame} />
+          </div>
+        )}
+
+        {/* Crash */}
+        {currentGame === 'crash' && (
           <div className="crash-container">
             <CrashPage setCurrentGame={setCurrentGame} />
           </div>
