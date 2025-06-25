@@ -5,7 +5,7 @@ import Menu, { games } from '../Menu/Menu';
 import './HomePage.css';
 
 const HomePage = () => {
-  const [currentGame, setCurrentGame] = useState(null);
+  const [currentGame, setCurrentGame] = useState('mainPage');
 
   return (
     <div className="homepage">
