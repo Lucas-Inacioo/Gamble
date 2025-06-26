@@ -127,6 +127,7 @@ const CrashGame = ({
         };
     }, [gamePhase]);
 
+    const currentX = dataPoints[dataPoints.length - 1]?.x ?? 0;
     const currentY = dataPoints[dataPoints.length - 1]?.y ?? 1;
 
     /* gráfico -------------------------------------------------------------- */
@@ -152,8 +153,8 @@ const CrashGame = ({
 
     const options = {
         scales: {
-            x: { type: 'linear', min: 0, max: Math.max(5, dataPoints.length * 0.01) },
-            y: { type: 'linear', min: 1, max: Math.max(1.3, currentY + 0.5) },
+            x: { type: 'linear', min: 0, max: Math.max(5, currentX * 1.1) },
+            y: { type: 'linear', min: 1, max: Math.max(1.3, currentY * 1.1) },
         },
         animation: { duration: 0 },
         plugins: {
